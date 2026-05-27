@@ -51,6 +51,11 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: str = ""
     QDRANT_URL: str = ""
     QDRANT_API_KEY: str = ""
+    # Redis Cache
+    REDIS_URL: str = "redis://localhost:6379/0"
+    CACHE_TTL_POLICY: int = 900  # 15 minutes
+    CACHE_TTL_SQL: int = 300     # 5 minutes
+    ENABLE_CACHE: bool = True
     
     class Config:
         env_file = ".env"

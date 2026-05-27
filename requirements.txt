@@ -18,3 +18,4 @@ langchain-community
 langchain-qdrant
 docling
 python-docx
+redis[hiredis]

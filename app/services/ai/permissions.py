@@ -15,6 +15,7 @@ ROLE_PERMISSIONS = {
         "view_own_projects": True,
         "approve_leave": False,
         "reject_leave": False,
+        "approve_all_leaves": False,
         "assign_ticket": False,
         "update_ticket": False,
         "create_announcement": False,
@@ -32,6 +33,7 @@ ROLE_PERMISSIONS = {
         "view_own_projects": True,
         "approve_leave": True,
         "reject_leave": True,
+        "approve_all_leaves": True,
         "assign_ticket": True,
         "update_ticket": True,
         "create_announcement": True,
@@ -49,6 +51,7 @@ ROLE_PERMISSIONS = {
         "view_own_projects": True,
         "approve_leave": True,
         "reject_leave": True,
+        "approve_all_leaves": True,
         "assign_ticket": True,
         "update_ticket": True,
         "create_announcement": True,
@@ -76,5 +79,6 @@ def get_refusal_message(action: str) -> str:
         "assign_employee_to_project": "You do not have permission to assign employees to projects.",
         "view_all_employees": "You do not have permission to view all employee data.",
         "view_payroll": "You do not have permission to access payroll information.",
+        "view_company_data": "🔒 **Access Restricted** — As an employee, you can only access your own data. Company-wide information such as all projects, all employees, or department-level data is not available to you. Please ask about your own records (e.g., \"my projects\", \"my leave balance\", \"my tickets\").",
     }
     return refusals.get(action, "You do not have permission to perform this action.")

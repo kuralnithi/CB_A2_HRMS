@@ -59,6 +59,27 @@ async def update_leave_status(leave_id: int, status: str, access_token: str) -> 
         return {"success": False, "error": error_detail}
 
 
+async def approve_all_pending_leaves(access_token: str) -> dict:
+    """
+    Calls POST /api/v1/leaves/approve-all to approve all pending leaves.
+    """
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            f"{BASE_URL}/leaves/approve-all",
+            headers={"Authorization": f"Bearer {access_token}"},
+            timeout=10.0,
+        )
+        if response.is_success:
+            return {"success": True, "data": response.json()}
+            
+        try:
+            error_detail = response.json().get("detail", "Failed to bulk approve leaves")
+        except:
+            error_detail = response.text or "Failed to bulk approve leaves"
+            
+        return {"success": False, "error": error_detail}
+
+
 async def get_projects(access_token: str) -> dict:
     """Calls GET /api/v1/projects/ to list all projects."""
     async with httpx.AsyncClient() as client:
@@ -94,3 +115,49 @@ async def create_ticket(payload: dict, access_token: str) -> dict:
             error_detail = response.text or "Failed to create ticket"
             
         return {"success": False, "error": error_detail}
+
+
+async def update_ticket_status(ticket_id: int, new_status: str, access_token: str) -> dict:
+    """
+    Calls PATCH /api/v1/tickets/{ticket_id}/status to update a ticket's status.
+    Only MANAGER and ADMIN can do this.
+    
+    new_status: OPEN, IN_PROGRESS, RESOLVED, CLOSED
+    """
+    async with httpx.AsyncClient() as client:
+        response = await client.patch(
+            f"{BASE_URL}/tickets/{ticket_id}/status",
+            params={"new_status": new_status},
+            headers={"Authorization": f"Bearer {access_token}"},
+            timeout=10.0,
+        )
+        if response.is_success:
+            return {"success": True, "data": response.json()}
+            
+        try:
+            error_detail = response.json().get("detail", "Failed to update ticket status")
+        except:
+            error_detail = response.text or "Failed to update ticket status"
+            
+        return {"success": False, "error": error_detail}
+
+
+async def close_all_open_tickets(ticket_ids: list, access_token: str) -> dict:
+    """
+    Closes multiple tickets by calling PATCH /api/v1/tickets/{id}/status for each.
+    Only MANAGER and ADMIN can do this.
+    """
+    results = []
+    success_count = 0
+    for tid in ticket_ids:
+        res = await update_ticket_status(int(tid), "CLOSED", access_token)
+        results.append(res)
+        if res.get("success"):
+            success_count += 1
+    return {
+        "success": success_count > 0,
+        "success_count": success_count,
+        "total": len(ticket_ids),
+        "data": results,
+    }
+

@@ -107,6 +107,46 @@ async def update_leave_status(
     return _build_response(db_leave, emp.name if emp else None)
 
 
+@router.post("/approve-all")
+async def approve_all_pending_leaves(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    if current_user.role not in [RoleEnum.MANAGER, RoleEnum.ADMIN]:
+        raise HTTPException(status_code=403, detail="Only managers and admins can approve leave requests")
+
+    if current_user.role == RoleEnum.ADMIN:
+        result = await db.execute(select(LeaveRequest).where(LeaveRequest.status == LeaveStatusEnum.PENDING))
+    else:
+        mgr_result = await db.execute(select(Employee).where(Employee.user_id == current_user.id))
+        mgr = mgr_result.scalars().first()
+        if not mgr:
+            return {"success": True, "count": 0}
+
+        team_result = await db.execute(
+            select(Employee.id).where(Employee.manager_id == mgr.id)
+        )
+        team_ids = [r[0] for r in team_result.all()]
+        if not team_ids:
+            return {"success": True, "count": 0}
+
+        result = await db.execute(
+            select(LeaveRequest).where(
+                LeaveRequest.status == LeaveStatusEnum.PENDING,
+                LeaveRequest.employee_id.in_(team_ids)
+            )
+        )
+
+    leaves = result.scalars().all()
+    count = len(leaves)
+    for leave in leaves:
+        leave.status = LeaveStatusEnum.APPROVED
+        leave.reviewed_at = datetime.utcnow()
+
+    await db.commit()
+    return {"success": True, "count": count}
+
+
 @router.get("/", response_model=List[LeaveRequestResponse])
 async def list_leaves(
     db: AsyncSession = Depends(get_db),

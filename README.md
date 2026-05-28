@@ -150,17 +150,24 @@ pip install -r requirements.txt
 ```
 
 #### 5. Database Initialization & Seeding
-To initialize your local database schema and populate it with rich sample HR and project data, run the following scripts in order:
 
-1. **Create the Local Database** (requires your local PostgreSQL user to have creation permissions):
+> [!IMPORTANT]
+> **Manual Schema Creation Required**: Database tables are **not automatically created** when starting the application for the first time. Because the project uses **Alembic** to manage database versions, you must manually run the migration scripts to initialize the database tables and schema.
+
+To initialize your local database schema and populate it with rich sample HR and project data, run the following three commands in order:
+
+1. **Create the PostgreSQL Database**:
+   Generates a new database called `hr_copilot` (requires your local PostgreSQL user to have database creation permissions):
    ```bash
    python create_db.py
    ```
-2. **Apply Database Migrations** (generates all necessary tables using Alembic):
+2. **Apply Schema Migrations (Creates Tables)**:
+   Runs all migration scripts in `alembic/versions` to automatically construct the tables, indexes, and foreign key relationships in your database:
    ```bash
    alembic upgrade head
    ```
-3. **Seed Database with Sample Enterprise Data** (creates default HR departments, projects, employee profiles, and sample credentials):
+3. **Seed the Database with Sample Data**:
+   Populates the database tables with default departments, projects, employee profiles, support tickets, announcements, and default login credentials:
    ```bash
    python seed.py
    ```

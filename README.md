@@ -2,9 +2,29 @@
 
 This is the backend service for the AI HRMS Copilot project, built with FastAPI, PostgreSQL, and Langchain.
 
+---
+
+## 🔗 Quick Links & Deployments
+
+- **Frontend Repository:** [https://github.com/kuralnithi/CB_A2_HRMS_FRNTD](https://github.com/kuralnithi/CB_A2_HRMS_FRNTD)
+- **Backend Repository:** [https://github.com/kuralnithi/CB_A2_HRMS](https://github.com/kuralnithi/CB_A2_HRMS)
+- **Frontend Deployed Link:** [https://cb-a2-hrms-frntd.vercel.app](https://cb-a2-hrms-frntd.vercel.app)
+- **Backend Deployed Link:** [https://cb-a2-hrms.onrender.com/docs](https://cb-a2-hrms.onrender.com/docs)
+
+> [!NOTE]
+> **Render Server Spin-up:** To spin up the backend server on Render (as it may sleep due to inactivity), simply open the backend deployment URL in your browser.
+
+---
+
 ## 🌟 Overview
 
 The backend acts as the core brain of the HRMS, providing secure REST APIs for frontend consumption and housing the advanced AI Copilot processing engine. 
+
+## Gen AI Project
+
+### HRMS
+
+- [View the LinkedIn post for this HRMS project](https://www.linkedin.com/posts/kural-nithi-0b967122b_ai-generativeai-langchain-ugcPost-7465425438513938432-WNot/?utm_source=share&utm_medium=member_desktop&rcm=ACoAADmVtk0BmNqWq-K8895ZhmcAzBKhjfXB5oY)
 
 ### ✨ Key Features
 - **FastAPI Core**: High-performance, asynchronous REST APIs.
@@ -72,34 +92,90 @@ flowchart TD
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Getting Started & Local Setup
 
-### Prerequisites
-- Python 3.9+
-- PostgreSQL
-- OpenAI API Key
+Follow these simple, step-by-step instructions to set up the backend service locally.
 
-### Installation
+### 📋 Prerequisites
 
-1. Clone the repository and navigate to the backend folder.
-2. Create a virtual environment:
+Before you start, ensure you have the following installed on your machine:
+- **Python 3.9+**
+- **PostgreSQL** (running locally or using a cloud database like Neon)
+- **Redis** (running locally or using a cloud provider like Upstash)
+- **LLM API Keys** (Groq and Gemini)
+- **Qdrant Vector DB Account / Instance**
+
+---
+
+### ⚙️ Step-by-Step Installation Guide
+
+#### 1. Clone the Repository & Navigate to Backend
+If you haven't already, clone the repository and navigate into the `backend` directory:
+```bash
+git clone https://github.com/kuralnithi/CB_A2_HRMS.git
+cd CB_A2_HRMS/backend
+```
+
+#### 2. Configure Environment Variables
+We have provided a detailed template file containing all the configuration keys. Copy the `sample.env` to a new `.env` file:
+```bash
+cp sample.env .env
+```
+Now, open the `.env` file and replace the placeholder values with your actual database links and API keys.
+
+#### 3. Create & Activate a Virtual Environment
+It is highly recommended to isolate your dependencies using a Python virtual environment:
+
+- **On Windows (PowerShell):**
+  ```powershell
+  python -m venv venv
+  .\venv\Scripts\Activate.ps1
+  ```
+- **On Windows (Command Prompt):**
+  ```cmd
+  python -m venv venv
+  .\venv\Scripts\activate.bat
+  ```
+- **On macOS / Linux:**
+  ```bash
+  python3 -m venv venv
+  source venv/bin/activate
+  ```
+
+#### 4. Install Project Dependencies
+With your virtual environment active, run the following command to install the required packages:
+```bash
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+#### 5. Database Initialization & Seeding
+To initialize your local database schema and populate it with rich sample HR and project data, run the following scripts in order:
+
+1. **Create the Local Database** (requires your local PostgreSQL user to have creation permissions):
    ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   python create_db.py
    ```
-3. Install dependencies:
+2. **Apply Database Migrations** (generates all necessary tables using Alembic):
    ```bash
-   pip install -r requirements.txt
+   alembic upgrade head
    ```
-4. Set up your `.env` file:
-   ```env
-   DATABASE_URL=postgresql://user:password@localhost:5432/ai_hrms
-   SECRET_KEY=your_super_secret_key
-   OPENAI_API_KEY=sk-...
-   ```
-5. Run the database migrations (if applicable) and start the server:
+3. **Seed Database with Sample Enterprise Data** (creates default HR departments, projects, employee profiles, and sample credentials):
    ```bash
-   uvicorn main:app --reload
+   python seed.py
    ```
 
-The API will be available at [http://127.0.0.1:8000](http://127.0.0.1:8000) with Swagger documentation at `/docs`.
+#### 6. Start the FastAPI Development Server
+You are now ready to launch the backend server! Run:
+```bash
+uvicorn app.main:app --reload
+```
+
+---
+
+### 🔍 Verification & Interactive Docs
+
+Once the server is running, the API will be locally served at:
+- **Root URL:** `http://127.0.0.1:8000`
+- **Swagger Interactive API Documentation:** [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) (Highly recommended for testing endpoints and viewing schemas)
+- **Alternative ReDoc Documentation:** [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)

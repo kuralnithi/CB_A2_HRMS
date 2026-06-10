@@ -166,6 +166,8 @@ async def route_query(
                 }
             }
             
+        # Flow: file:///c:/Users/kural/Downloads/capstone_project_assignments/ai_hr_copilot/backend/app/api/v1/endpoints/chat.py#L392 route_chat() → router.py route_query()
+        #       → file:///c:/Users/kural/Downloads/capstone_project_assignments/ai_hr_copilot/backend/app/services/ai/policy_rag.py query_policy_rag()
         data = await query_policy_rag(message)
         dev_metadata = {
             "latency_ms": int((time.time() - start_time) * 1000),
@@ -270,6 +272,8 @@ async def route_query(
                     }
                 }
             
+        # Flow: file:///c:/Users/kural/Downloads/capstone_project_assignments/ai_hr_copilot/backend/app/api/v1/endpoints/chat.py#L392 route_chat() → router.py route_query()
+        #       → file:///c:/Users/kural/Downloads/capstone_project_assignments/ai_hr_copilot/backend/app/services/ai/sql_agent.py query_sql_agent()
         data = await query_sql_agent(message, user_id, employee_id, role)
         analytics_metadata = data.get("dev_metadata", {})
         
@@ -301,6 +305,8 @@ async def route_query(
         return response
 
     elif intent == "HR_ACTION":
+        # Flow: file:///c:/Users/kural/Downloads/capstone_project_assignments/ai_hr_copilot/backend/app/api/v1/endpoints/chat.py#L392 route_chat() → router.py route_query()
+        #       → file:///c:/Users/kural/Downloads/capstone_project_assignments/ai_hr_copilot/backend/app/services/ai/action_agent.py execute_hr_action()
         data = await execute_hr_action(message, user_id, employee_id, role, access_token, history=history)
         return {
             "intent": intent,

@@ -400,6 +400,8 @@ async def route_chat(
     try:
         employee = await _get_employee_optional(db, current_user)
 
+        # Flow: file:///c:/Users/kural/Downloads/capstone_project_assignments/ai_hr_copilot/frontend/components/ai/chat-panel.tsx#L1010 fetch() → POST /api/v1/chat/router
+        #       → route_chat() → file:///c:/Users/kural/Downloads/capstone_project_assignments/ai_hr_copilot/backend/app/services/ai/router.py#L227 route_query()
         result = await route_query(
             message=req.message,
             user_id=current_user.id,
